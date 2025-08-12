@@ -6,11 +6,21 @@ import re
 import matplotlib.pyplot as plt
 from io import BytesIO
 import os
+import base64
 
 # Configuration from environment variables
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
-GOOGLE_CREDENTIALS_FILE = os.getenv('GOOGLE_CREDENTIALS_FILE', r'credentials.json')  # Default to local file if not set
+GOOGLE_CREDENTIALS_BASE64 = os.getenv('GOOGLE_CREDENTIALS_BASE64')
 SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
+
+# Handle Google credentials file
+if GOOGLE_CREDENTIALS_BASE64:
+    credentials_data = base64.b64decode(GOOGLE_CREDENTIALS_BASE64).decode('utf-8')
+    with open('credentials.json', 'w') as f:
+        f.write(credentials_data)
+    GOOGLE_CREDENTIALS_FILE = 'credentials.json'
+else:
+    GOOGLE_CREDENTIALS_FILE = os.getenv('GOOGLE_CREDENTIALS_FILE', r'credentials.json')
 
 # Google Sheets setup
 scopes = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
